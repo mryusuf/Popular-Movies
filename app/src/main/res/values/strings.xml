@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+
+    <!-- TODO: Change your API key here -->
+    <string name="key">INSERT KEY HERE</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sort_top">Sort by: Top Rated</string>
+    <string name="sort_populer">Sort by: Populer</string>
+
+    <string name="url_top">vote_average.desc</string>
+    <string name="url_pop">popularity.desc</string>
+
+    <string name="dummy">This text will be replaced</string>
+    <string name="not_found">Data not found</string>
+    <string name="parcel_moviedb">PARCEL_MOVIEDB</string>
+</resources>

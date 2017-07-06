@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item android:id="@+id/menu_pop"
+        android:title="@string/sort_populer"
+        android:orderInCategory="1"
+        app:showAsAction="never"/>
+    <item android:id="@+id/menu_top"
+        android:title="@string/sort_top"
+        android:orderInCategory="1"
+        app:showAsAction="never"/>
+</menu>
