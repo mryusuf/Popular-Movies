@@ -8,8 +8,8 @@
     <string name="sort_top">Sort by: Top Rated</string>
     <string name="sort_populer">Sort by: Populer</string>
 
-    <string name="url_top">vote_average.desc</string>
-    <string name="url_pop">popularity.desc</string>
+    <string name="url_top">top_rated</string>
+    <string name="url_pop">popular</string>
 
     <string name="not_found">Data not found</string>
     <string name="parcel_moviedb">PARCEL_MOVIEDB</string>

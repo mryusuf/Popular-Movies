@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"
-        android:paddingLeft="50dp"
+        android:paddingLeft="30dp"
         android:textSize="@dimen/text_size_title"
         tools:text="This text will be replaced"
         android:textColor="@android:color/white"
