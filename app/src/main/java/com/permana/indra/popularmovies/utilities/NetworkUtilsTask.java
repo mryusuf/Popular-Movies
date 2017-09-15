@@ -17,6 +17,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Scanner;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by My on 06/07/2017.
@@ -50,6 +53,8 @@ public class NetworkUtilsTask extends AsyncTask<String, Void, MovieDb[]> {
         mListener = listener;
         mApiKey = apiKey;
     }
+
+
 
     @Override
     protected MovieDb[] doInBackground(String... params) {
@@ -131,6 +136,7 @@ public class NetworkUtilsTask extends AsyncTask<String, Void, MovieDb[]> {
         final String TAG_OVERVIEW = "overview";
         final String TAG_VOTE_AVERAGE = "vote_average";
         final String TAG_RELEASE_DATE = "release_date";
+        final String TAG_ID = "id";
 
         // Get the array containing hte movieDbs found
         JSONObject moviesJson = new JSONObject(moviesJsonStr);
@@ -148,6 +154,7 @@ public class NetworkUtilsTask extends AsyncTask<String, Void, MovieDb[]> {
             JSONObject movieInfo = resultsArray.getJSONObject(i);
 
             // Store data in movie object
+            movieDbs [i].setId(movieInfo.getLong(TAG_ID));
             movieDbs [i].setOriginalTitle(movieInfo.getString(TAG_ORIGINAL_TITLE));
             movieDbs [i].setPosterPath(movieInfo.getString(TAG_POSTER_PATH));
             movieDbs [i].setOverview(movieInfo.getString(TAG_OVERVIEW));
@@ -178,6 +185,51 @@ public class NetworkUtilsTask extends AsyncTask<String, Void, MovieDb[]> {
         return new URL(builtUri.toString());
     }
 
+    public URL buildTrailersUrl(long id){
+        String API_BASE_URL = "http://api.themoviedb.org/3/movie/";
+        String API_PARAM_KEY = "api_key";
+        String API_TRAILERS_PATH = "videos";
+
+        Uri builtUri = Uri.parse(API_BASE_URL).buildUpon()
+                .appendPath(Long.toString(id))
+                .appendPath(API_TRAILERS_PATH)
+                .appendQueryParameter(API_PARAM_KEY, mApiKey)
+                .build();
+
+        Log.d(LOG_TAG, "Query URI: " + builtUri.toString());
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+    public URL buildReviewsUrl(long id){
+        String API_BASE_URL = "http://api.themoviedb.org/3/movie/";
+        String API_PARAM_KEY = "api_key";
+        String API_REVIEWS_PATH = "reviews";
+
+        Uri builtUri = Uri.parse(API_BASE_URL).buildUpon()
+                .appendPath(Long.toString(id))
+                .appendPath(API_REVIEWS_PATH)
+                .appendQueryParameter(API_PARAM_KEY, mApiKey)
+                .build();
+
+        Log.d(LOG_TAG, "Query URI: " + builtUri.toString());
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
     @Override
     protected void onPostExecute(MovieDb[] movieDbs ) {
         super.onPostExecute(movieDbs );
@@ -188,6 +240,25 @@ public class NetworkUtilsTask extends AsyncTask<String, Void, MovieDb[]> {
 
     public interface OnTaskCompleted {
         void onFetchMoviesTaskCompleted(MovieDb[] movieDbs );
+    }
+
+    public String getResponseFromHttpUrl(URL url) throws IOException {
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        try {
+            InputStream in = urlConnection.getInputStream();
+
+            Scanner scanner = new Scanner(in);
+            scanner.useDelimiter("\\A");
+
+            boolean hasInput = scanner.hasNext();
+            if (hasInput) {
+                return scanner.next();
+            } else {
+                return null;
+            }
+        } finally {
+            urlConnection.disconnect();
+        }
     }
 
 }

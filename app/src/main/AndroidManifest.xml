@@ -23,9 +23,13 @@
         </activity>
         <activity
             android:name=".DetailActivity"
-            android:parentActivityName=".MainActivity"
-            >
-        </activity>
+            android:parentActivityName=".MainActivity" android:launchMode="singleTop"></activity>
+        <activity android:name=".ReviewsActivity"
+            android:parentActivityName=".DetailActivity" android:launchMode="singleTop"></activity>
+        <provider
+            android:authorities="com.permana.indra.popularmovies"
+            android:name=".db.MovieCP"
+            android:exported="false"/>
     </application>
 
 </manifest>

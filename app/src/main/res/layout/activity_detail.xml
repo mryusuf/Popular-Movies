@@ -1,95 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
 
-<LinearLayout
-    android:layout_width="match_parent"
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.permana.indra.popularmovies.DetailActivity">
-
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:paddingLeft="30dp"
-        android:textSize="@dimen/text_size_title"
-        tools:text="This text will be replaced"
-        android:textColor="@android:color/white"
-        android:background="@color/colorAccent"
-        />
-    <LinearLayout
-        android:layout_marginTop="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:orientation="horizontal"
-        >
-
-        <ImageView
-            android:layout_margin="16dp"
-            android:id="@+id/poster_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-             />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="2"
-            android:orientation="vertical"
-            android:paddingEnd="2dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="2dp"
-            android:paddingStart="5dp">
-
-
-
-            <TextView
-                android:id="@+id/tv_release_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                tools:text="This text will be replaced"
-                android:textSize="@dimen/text_size_date" />
-
-
-            <TextView
-                android:id="@+id/tv_vote_average"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                tools:text="This text will be replaced"
-                android:textSize="@dimen/text_size" />
-        </LinearLayout>
-
-    </LinearLayout>
-
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="22dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:context="com.permana.indra.popularmovies.DetailActivity">
 
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            android:paddingLeft="30dp"
+            android:textSize="@dimen/text_size_title"
+            tools:text="This text will be replaced"
+            android:textColor="@android:color/white"
+            android:background="@color/colorAccent"
+            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            >
+
+            <ImageView
+                android:layout_margin="16dp"
+                android:id="@+id/poster_detail"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                />
+
+                <TextView
+                    android:id="@+id/tv_release_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    tools:text="This text will be replaced"
+                    android:textSize="@dimen/text_size_date"
+                    android:layout_toRightOf="@id/poster_detail"
+                    android:textAlignment="center"/>
+
+
+                <TextView
+                    android:id="@+id/tv_vote_average"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    tools:text="This text will be replaced"
+                    android:textSize="@dimen/text_size"
+                    android:layout_below="@id/tv_release_date"
+                    android:layout_toRightOf="@id/poster_detail"
+                    android:textAlignment="center" />
+                <Button
+                    android:id="@+id/favourite_button"
+                    android:layout_marginRight="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:text="@string/add_favourite"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    style="@style/Widget.AppCompat.Light.ActionButton"
+                    android:background="@color/colorPrimary"
+                    android:layout_below="@id/tv_vote_average"
+                    android:layout_toRightOf="@id/poster_detail"
+                    android:layout_alignParentRight="true"
+                    android:textAlignment="center"
+                    />
+                <Button
+                    android:id="@+id/reviews_button"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:text="@string/reviews_title"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    style="@style/Widget.AppCompat.Light.ActionButton"
+                    android:background="@color/colorAccent"
+                    android:onClick="seeReviews"
+                    android:layout_below="@id/favourite_button"
+                    android:layout_toRightOf="@id/poster_detail"
+                    android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
 
             <TextView
+                android:layout_margin="8dp"
                 android:id="@+id/tv_overview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="This text will be replaced"
                 android:textSize="@dimen/text_size"/>
 
+            <TextView
+                android:layout_margin="8dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tv_trailers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/trailers_head"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_date"/>
 
-    </LinearLayout>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dividerHeight="4dp"
+                android:id="@+id/trailers_list_view"
+                android:layout_marginTop="24dp"
+                android:scrollbars="none" />
+            </LinearLayout>
 
-
-</LinearLayout>
 </ScrollView>

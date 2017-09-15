@@ -13,4 +13,15 @@
 
     <string name="not_found">Data not found</string>
     <string name="parcel_moviedb">PARCEL_MOVIEDB</string>
+
+    <string name="reviews_title">Movie Reviews</string>
+    <string name="no_reviews">There are currently no reviews available for this movie</string>
+    <string name="add_favourite">Add to favourite</string>
+    <string name="trailers_head">Trailers</string>
+    <string name="reviews_intent_extra">reviews</string>
+    <string name="review_author">Author: %s</string>
+    <string name="added_favourite">Saved to favourite</string>
+    <string name="add_favourite_error">Error Saving to favourite</string>
+    <string name="delete_bookmark">Removed from favourite</string>
+    <string name="delete_bookmark_error">Error Removing from favourite</string>
 </resources>

@@ -1,5 +1,5 @@
-# Popular-Movies
-This is popupar movies app for Udacity lesson
+# Popular-Movies 2
+This is popular movies app for Udacity lesson
 
 Note to instructors :
 
