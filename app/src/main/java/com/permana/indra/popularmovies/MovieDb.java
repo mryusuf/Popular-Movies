@@ -40,11 +40,11 @@ public class MovieDb implements Parcelable{
     private ArrayList<Reviews> reviews;
     private Bitmap poster;
 
-    Bitmap getPoster() {
+    public Bitmap getPoster() {
         return poster;
     }
 
-    void setPoster(Bitmap poster) {
+    public void setPoster(Bitmap poster) {
         this.poster = poster;
     }
     void setPosterFromCursor(Cursor cursor){
@@ -59,11 +59,11 @@ public class MovieDb implements Parcelable{
     public void setId(long id) {
         this.id = id;
     }
-    void setTrailers(ArrayList<Trailers> trailers) {
+    public void setTrailers(ArrayList<Trailers> trailers) {
         this.trailers = trailers;
     }
 
-    void setReviews(ArrayList<Reviews> reviews) {
+    public void setReviews(ArrayList<Reviews> reviews) {
         this.reviews = reviews;
     }
 

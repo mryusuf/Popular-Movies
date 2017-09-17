@@ -2,11 +2,14 @@ package com.permana.indra.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,10 +17,16 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.permana.indra.popularmovies.db.MovieContract;
+import com.permana.indra.popularmovies.db.MovieDBHelper;
 import com.permana.indra.popularmovies.utilities.NetworkUtilsTask;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     GridView gridView;
+    MovieDb[] movieDbs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,9 +92,28 @@ public class MainActivity extends AppCompatActivity {
 
             getMovie(getResources().getString(R.string.url_top));
         }
-
+        else if (id==R.id.menu_fav){
+            getFavouriteMovie();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void getFavouriteMovie() {
+        if (isNetworkAvailable()) {
+            MovieDBHelper dbHelper = new MovieDBHelper(this);
+            movieDbs = new MovieDb[dbHelper.getAllMovie().length];
+            Log.d("movieDbs length ",String.valueOf(dbHelper.getAllMovie().length));
+            movieDbs = dbHelper.getAllMovie();
+            int i=0;
+            while (i<=dbHelper.getAllMovie().length){
+                gridView.setAdapter(new MovieDBAdapter(getApplicationContext(),movieDbs));
+                i++;
+            }
+
+        }else {
+            Toast.makeText(this,"Check Internet Connection", Toast.LENGTH_LONG).show();
+        }
     }
 
 

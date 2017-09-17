@@ -6,6 +6,7 @@ import android.graphics.Movie;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,6 @@ class MovieDBAdapter extends BaseAdapter {
         this.context=context;
         this.movieDbs=movieDbs;
     }
-
 
     @Override
     public int getCount() {
@@ -67,7 +67,8 @@ class MovieDBAdapter extends BaseAdapter {
             imageView=(ImageView)convertView;
         }
 
-        Picasso.with(context).load(movieDbs[position].getPosterPath()).into(imageView);
+        Picasso.with(context).load(movieDbs[position].getDetailPosterUri()).into(imageView);
+        Log.d("posterPath= ", movieDbs[position].getDetailPosterUri());
         return imageView;
     }
 }
