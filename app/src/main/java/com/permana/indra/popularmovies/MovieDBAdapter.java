@@ -1,74 +1,106 @@
 package com.permana.indra.popularmovies;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Movie;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
+import java.util.ArrayList;
 
 /**
- * Created by My on 01/07/2017.
+ * Created by asus on 26/09/2017.
  */
 
-class MovieDBAdapter extends BaseAdapter {
-    private final Context context;
-    private final MovieDb[] movieDbs;
+public class MovieDbAdapter extends RecyclerView.Adapter<MovieDbAdapter.PosterViewHolder> {
+    private static final String TAG = MovieDbAdapter.class.getSimpleName();
+    private ArrayList<MovieDb> mMovies;
+    private final onPosterClickHandler mClickHandler;
 
-    public MovieDBAdapter(Context context, MovieDb[] movieDbs) {
-        this.context=context;
-        this.movieDbs=movieDbs;
+    interface onPosterClickHandler {
+        void onClick(MovieDb movie);
+
+    }
+
+    MovieDbAdapter(onPosterClickHandler clickHandler) {
+        mMovies = new ArrayList<>();
+        mClickHandler = clickHandler;
+    }
+
+    void addMovies(ArrayList<MovieDb> movies) {
+        mMovies.addAll(movies);
+        notifyDataSetChanged();
+    }
+
+    void clear() {
+        mMovies.clear();
+        notifyDataSetChanged();
+    }
+
+    void saveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("ADAPTER_MOVIEDB", mMovies);
+    }
+
+    void restoreInstanceState(Bundle savedInstanceState) {
+        Log.d(TAG, "Restore instance state");
+        if (savedInstanceState.containsKey("ADAPTER_MOVIEDB")) {
+            ArrayList<MovieDb> savedMovies = savedInstanceState.getParcelableArrayList("ADAPTER_MOVIEDB");
+            mMovies.clear();
+            mMovies.addAll(savedMovies);
+            notifyDataSetChanged();
+        }
     }
 
     @Override
-    public int getCount() {
-        if(movieDbs.length==0 || movieDbs==null){
-            return -1;
+    public PosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final Context context = parent.getContext();
+        int layoutItemId = R.layout.movies_item;
+        LayoutInflater inflater = LayoutInflater.from(context);
+
+        View view = inflater.inflate(layoutItemId, parent, false);
+
+        return new PosterViewHolder(view);
+
+    }
+
+    @Override
+    public void onBindViewHolder(PosterViewHolder holder, int position) {
+        holder.setImage(mMovies.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return mMovies.size();
+    }
+
+    class PosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        ImageView mImageView;
+        Context mContext;
+
+        PosterViewHolder(View itemView) {
+            super(itemView);
+            mImageView = (ImageView) itemView.findViewById(R.id.image_poster);
+            mContext = itemView.getContext();
+            itemView.setOnClickListener(this);
         }
 
-        return movieDbs.length;
-    }
-
-    @Override
-    public MovieDb getItem(int i) {
-        if(movieDbs.length==0 || movieDbs==null){
-            return null;
-        }
-        return movieDbs[i];
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return 0;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        ImageView imageView;
-
-        if(convertView==null){
-            imageView=new ImageView(context);
-            imageView.setAdjustViewBounds(true);
-        }else{
-            imageView=(ImageView)convertView;
+        void setImage(MovieDb movie) {
+            Uri posterUri = movie.getDetailPosterUri();
+            Picasso.with(mContext).load(posterUri).into(mImageView);
         }
 
-        Picasso.with(context).load(movieDbs[position].getDetailPosterUri()).into(imageView);
-        Log.d("posterPath= ", movieDbs[position].getDetailPosterUri());
-        return imageView;
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            MovieDb selectedMovie = mMovies.get(position);
+            mClickHandler.onClick(selectedMovie);
+        }
     }
 }

@@ -2,7 +2,7 @@
     <string name="app_name">Popular Movies</string>
 
     <!-- TODO: Change your API key here -->
-    <string name="key">.....</string>
+    <string name="key">28a862c2401e38680a27a23e2eeb2657</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sort_top">Sort by: Top Rated</string>

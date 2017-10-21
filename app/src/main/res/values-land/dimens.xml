@@ -3,5 +3,5 @@
     <dimen name="text_size">16sp</dimen>
     <dimen name="text_size_date">20sp</dimen>
     <dimen name="text_size_title">28sp</dimen>
-    <integer name="gallery_columns">2</integer>
+    <integer name="gallery_columns">4</integer>
 </resources>

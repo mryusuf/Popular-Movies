@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.permana.indra.popularmovies.db.MovieContract;
 import com.permana.indra.popularmovies.utilities.NetworkUtilsTask;
@@ -32,11 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks  {
 
@@ -47,12 +43,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     ArrayList<Reviews> mReviews;
     TrailersAdapter trailersAdapter;
     ListView mTrailersListView;
+    private String key;
 
     private static final int LOADER_ID = 711;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        key=getResources().getString(R.string.key);
         TextView tvOriginalTitle = (TextView) findViewById(R.id.tv_title);
         ivPoster = (ImageView) findViewById(R.id.poster_detail);
         TextView tvOverView = (TextView) findViewById(R.id.tv_overview);
@@ -63,98 +62,101 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         trailersAdapter = new TrailersAdapter(this);
         mTrailersListView.setAdapter(trailersAdapter);
         Intent intent = getIntent();
+        Intent callerIntent = getIntent();
+        if (callerIntent.hasExtra(MovieDb.EXTRA_MOVIE)) {
+            movieDb = new MovieDb(callerIntent.getBundleExtra(MovieDb.EXTRA_MOVIE));
+            tvOriginalTitle.setText(movieDb.originalTitle);
+            tvVoteAverage.setText(String.valueOf(movieDb.voteAverage));
+            ivPoster.setImageBitmap(movieDb.getPoster());
 
-        movieDb = intent.getParcelableExtra(getString(R.string.parcel_moviedb));
-        if(movieDb.isBookmarked(getApplicationContext())){
-            mFavourite.setText(getString(R.string.added_favourite));
-        }
-        mFavourite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context context = getApplicationContext();
-                if (!movieDb.isBookmarked(context)) {
-                    if (movieDb.saveToBookmarks(context)) {
-                        mFavourite.setText(getString(R.string.added_favourite));
-                    }
-                } else {
-                    if (movieDb.removeFromBookmarks(context)) {
-                    }
-                }
+
+            String releaseDate = movieDb.releaseDate;
+            if (releaseDate == null) {
+                tvReleaseDate.setTypeface(null, Typeface.ITALIC);
+                releaseDate = getResources().getString(R.string.not_found);
+            } else {
+                tvReleaseDate.setText(releaseDate);
             }
-        });
-
-        final Bitmap[] posterBitmap = new Bitmap[1];
-        Bundle args = new Bundle();
-        if (movieDb.isBookmarked(getApplicationContext())){
-            args.putBoolean("local",true);
-
-        }else {
-            Picasso.with(this).load(movieDb.getDetailPosterUri())
-                    .into(new Target(){
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            posterBitmap[0] = bitmap;
-                            movieDb.setPoster(posterBitmap[0]);
-                            ivPoster.setImageBitmap(posterBitmap[0]);
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-
-                        }
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                        }
-                    });
-            args.putBoolean("local",false);
-        }
-
-
-        mTrailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Uri uri = trailersAdapter.getTrailerUri(position);
-
-                if (uri != null) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                }
-            }
-        });
-
-
-        tvOriginalTitle.setText(movieDb.getOriginalTitle());
-        tvVoteAverage.setText(movieDb.getVoteAverage());
-        ivPoster.setImageBitmap(movieDb.getPoster());
-
-
-        String releaseDate = movieDb.getReleaseDate();
-        if(releaseDate == null) {
-            tvReleaseDate.setTypeface(null, Typeface.ITALIC);
-            releaseDate = getResources().getString(R.string.not_found);
-        } else {
             tvReleaseDate.setText(releaseDate);
+
+
+            String overView = movieDb.overview;
+            if (overView == null) {
+                tvOverView.setTypeface(null, Typeface.ITALIC);
+                overView = getResources().getString(R.string.not_found);
+            }
+            tvOverView.setText(overView);
+            if (movieDb.isFavourite(this)) {
+                mFavourite.setText(getString(R.string.added_favourite));
+            }
+
+            mFavourite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Context context = getApplicationContext();
+                    if (!movieDb.isFavourite(context)) {
+                        if (movieDb.saveToFavourite(context)) {
+                            mFavourite.setText(getString(R.string.added_favourite));
+                        }
+                    } else {
+                        if (movieDb.removeFromFavourite(context)) {
+                            mFavourite.setText(getString(R.string.delete_favourite));
+                        }
+                    }
+                }
+            });
+
+            final Bitmap[] posterBitmap = new Bitmap[1];
+            Bundle args = new Bundle();
+            if (movieDb.isFavourite(this)) {
+                args.putBoolean("local", true);
+
+            } else {
+                Picasso.with(this).load(movieDb.getDetailPosterUri())
+                        .into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                posterBitmap[0] = bitmap;
+                                movieDb.setPoster(posterBitmap[0]);
+                                ivPoster.setImageBitmap(posterBitmap[0]);
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                            }
+                        });
+                args.putBoolean("local", false);
+            }
+
+
+            mTrailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Uri uri = trailersAdapter.getTrailerUri(position);
+
+                    if (uri != null) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
+                }
+            });
+
+
+            getSupportLoaderManager().restartLoader(LOADER_ID, args, this);
         }
-        tvReleaseDate.setText(releaseDate);
-
-
-
-        String overView = movieDb.getOverview();
-        if (overView == null) {
-            tvOverView.setTypeface(null, Typeface.ITALIC);
-            overView = getResources().getString(R.string.not_found);
-        }
-        tvOverView.setText(overView);
-
-        getSupportLoaderManager().restartLoader(LOADER_ID, args, this);
     }
 
     public void seeReviews(View v) {
         String reviewsString = Reviews.arrayToString(mReviews);
         Intent reviewsIntent = new Intent(getApplicationContext(), ReviewsActivity.class);
         reviewsIntent.putExtra(getString(R.string.reviews_intent_extra), reviewsString);
-        reviewsIntent.putExtra("title",movieDb.getOriginalTitle());
+        reviewsIntent.putExtra("title",movieDb.originalTitle);
         startActivity(reviewsIntent);
     }
 
@@ -175,17 +177,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                     long id = movieDb.id;
 
                     if (!local) {
-                        String apiKey = getString(R.string.key);
-                        Log.d(TAG, "Starting online query");
-                        NetworkUtilsTask.OnTaskCompleted taskCompleted = new NetworkUtilsTask.OnTaskCompleted() {
-                            @Override
-                            public void onFetchMoviesTaskCompleted(MovieDb[] movies) {
-
-                            }
-                        };
-                        NetworkUtilsTask networker = new NetworkUtilsTask(taskCompleted,apiKey);
-                        URL requestTrailersUrl = networker.buildTrailersUrl(id);
-                        URL requestReviewsUrl = networker.buildReviewsUrl(id);
+                        NetworkUtilsTask networker = new NetworkUtilsTask();
+                        URL requestTrailersUrl = networker.buildTrailersUrl(id,key);
+                        URL requestReviewsUrl = networker.buildReviewsUrl(id,key);
                         try {
                             String JSONResponseTrailers = networker.getResponseFromHttpUrl(requestTrailersUrl);
                             mTrailers = fetchTrailersFromJson(JSONResponseTrailers);

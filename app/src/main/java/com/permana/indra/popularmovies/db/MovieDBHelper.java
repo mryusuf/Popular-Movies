@@ -24,7 +24,7 @@ import static android.R.attr.name;
 
 public class MovieDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "PopularMovies.db";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 7;
 
     public MovieDBHelper(Context context){
         super(context,DATABASE_NAME,null,DB_VERSION);
@@ -37,7 +37,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                         MovieContract.MovieEntry.MOVIE_ID + " INTEGER PRIMARY KEY, " +
                         MovieContract.MovieEntry.MOVIE_TITLE + " TEXT NOT NULL, " +
                         MovieContract.MovieEntry.MOVIE_OVERVIEW + " TEXT NOT NULL, " +
-                        MovieContract.MovieEntry.MOVIE_POSTER + " BLOB NOT NULL, " +
+                        MovieContract.MovieEntry.MOVIE_POSTER + " BLOB NOT NULL," +
                         MovieContract.MovieEntry.MOVIE_POSTER_PATH + " TEXT NOT NULL, " +
                         MovieContract.MovieEntry.MOVIE_AVG + " REAL NOT NULL, " +
                         MovieContract.MovieEntry.MOVIE_RELEASE_DATE + " TEXT NOT NULL, " +
@@ -48,52 +48,6 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_QUERY);
     }
 
-    public MovieDb[] getAllMovie(){
-        String query = "SELECT * FROM " + MovieContract.MovieEntry.TABLE_NAME;
-
-        SQLiteDatabase database = getReadableDatabase();
-
-        Cursor c = database.rawQuery(query, null);
-        Log.d("cursor count ",String.valueOf(c.getCount()));
-        MovieDb[] movieDbs = new MovieDb[c.getCount()];
-        if (c != null) {
-            try{
-            while (c.moveToNext()) {
-                int i = 0;
-                long id = c.getLong(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_ID));
-                String title = c.getString(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TITLE));
-                String overview = c.getString(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_OVERVIEW));
-                byte[] bytes = c.getBlob(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER));
-                ByteArrayInputStream posterStream = new ByteArrayInputStream(bytes);
-                Bitmap poster = BitmapFactory.decodeStream(posterStream);
-
-                String posterPath = c.getString(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_POSTER_PATH));
-                String avg = c.getString(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_AVG));
-                String releaseDate = c.getString(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_RELEASE_DATE));
-//                ArrayList<Trailers> trailer = c.getString(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_TRAILERS));
-//                ArrayList<Reviews> review = c.getString(c.getColumnIndex(MovieContract.MovieEntry.MOVIE_REVIEWS));
-
-                movieDbs[i] = new MovieDb();
-                movieDbs[i].setId(id);
-                movieDbs[i].setOriginalTitle(title);
-                movieDbs[i].setOverview(overview);
-                movieDbs[i].setPoster(poster);
-                movieDbs[i].setPosterPath(posterPath);
-                movieDbs[i].setReleaseDate(releaseDate);
-                movieDbs[i].setVoteAverage(avg);
-//                movieDb.setTrailers(trailer);
-//                movieDb.setReviews(review);
-
-                i++;
-            }
-            }finally {
-                if (c != null && !c.isClosed())
-                    c.close();
-                database.close();
-            }
-        }
-        return movieDbs;
-    }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);

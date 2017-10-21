@@ -5,13 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Movie;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.permana.indra.popularmovies.db.MovieContract;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -22,7 +25,7 @@ import java.util.ArrayList;
  */
 
 public class MovieDb implements Parcelable{
-    static final String EXTRA_MOVIE = "com.permana.indra.popularmovies.EXTRA_MOVIE";
+    public static final String EXTRA_MOVIE = "com.permana.indra.popularmovies.EXTRA_MOVIE";
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE ="title";
     private static final String KEY_OVERVIEW = "overview";
@@ -30,15 +33,27 @@ public class MovieDb implements Parcelable{
     private static final String KEY_VOTE_AVERAGE = "vote_average";
     private static final String KEY_RELEASE_DATE = "release_date";
 
-    public long id;
-    private String originalTitle;
-    private String overview;
-    private String releaseDate;
-    private String posterPath;
-    private String voteAverage;
+    public final long id;
+    public final String originalTitle;
+    public final String overview;
+    public final String releaseDate;
+    private final String posterPath;
+    public final Double voteAverage;
     private ArrayList<Trailers> trailers;
     private ArrayList<Reviews> reviews;
     private Bitmap poster;
+
+    public MovieDb(long id, String originalTitle, String overview, String posterPath, double voteAverage, String releaseDate)
+    {
+        this.id=id;
+        this.originalTitle=originalTitle;
+        this.overview=overview;
+        this.posterPath=posterPath;
+        this.voteAverage=voteAverage;
+        this.releaseDate=releaseDate;
+        this.trailers = new ArrayList<>();
+        this.reviews = new ArrayList<>();
+    }
 
     public Bitmap getPoster() {
         return poster;
@@ -52,13 +67,7 @@ public class MovieDb implements Parcelable{
         ByteArrayInputStream posterStream = new ByteArrayInputStream(bytes);
         this.poster = BitmapFactory.decodeStream(posterStream);
     }
-    public long getId() {
-        return id;
-    }
 
-    public void setId(long id) {
-        this.id = id;
-    }
     public void setTrailers(ArrayList<Trailers> trailers) {
         this.trailers = trailers;
     }
@@ -67,57 +76,22 @@ public class MovieDb implements Parcelable{
         this.reviews = reviews;
     }
 
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
-    }
-
-    public String getOverview() {
-        return overview;
-    }
-
-    public void setOverview(String overview) {
-        this.overview = overview;
-    }
 
 
-    public String getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public String getPosterPath() {
-        final String posterUrl = "https://image.tmdb.org/t/p/w185";
-
-        return posterUrl+posterPath;
-    }
-
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
-    }
-
-    public String getVoteAverage() {
-        return voteAverage;
-    }
-
-    public void setVoteAverage(String voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
-
-    String getDetailPosterUri()
+    public Uri getDetailPosterUri()
     {
         final String detailPosterUrl = "https://image.tmdb.org/t/p/w500";
 
-        return detailPosterUrl+posterPath;
+        return Uri.parse(detailPosterUrl).buildUpon().appendEncodedPath(posterPath).build();
     }
-    public MovieDb(){
+    public MovieDb(Bundle bundle)
+    {
+        this(bundle.getLong(KEY_ID),
+                bundle.getString(KEY_TITLE),
+                bundle.getString(KEY_OVERVIEW),
+                bundle.getString(KEY_POSTER_PATH),
+                bundle.getDouble(KEY_VOTE_AVERAGE),
+                bundle.getString(KEY_RELEASE_DATE));
 
     }
     public MovieDb(Parcel parcel){
@@ -126,7 +100,7 @@ public class MovieDb implements Parcelable{
         overview=parcel.readString();
         releaseDate=parcel.readString();
         posterPath=parcel.readString();
-        voteAverage=parcel.readString();
+        voteAverage=parcel.readDouble();
     }
     @Override
     public int describeContents() {
@@ -140,7 +114,18 @@ public class MovieDb implements Parcelable{
         parcel.writeString(overview);
         parcel.writeString(releaseDate);
         parcel.writeString(posterPath);
-        parcel.writeString(voteAverage);
+        parcel.writeDouble(voteAverage);
+    }
+    public Bundle toBundle()
+    {
+        Bundle bundle = new Bundle();
+        bundle.putLong(KEY_ID, id);
+        bundle.putString(KEY_TITLE, originalTitle);
+        bundle.putString(KEY_OVERVIEW, overview);
+        bundle.putString(KEY_POSTER_PATH, posterPath);
+        bundle.putDouble(KEY_VOTE_AVERAGE, voteAverage);
+        bundle.putString(KEY_RELEASE_DATE,releaseDate);
+        return bundle;
     }
 
     public static final Parcelable.Creator<MovieDb> CREATOR = new Parcelable.Creator<MovieDb>() {
@@ -153,7 +138,17 @@ public class MovieDb implements Parcelable{
         }
     };
 
-    boolean saveToBookmarks(Context context){
+    static MovieDb getMovieFromJson(JSONObject jsonObject) throws JSONException
+    {
+        return new MovieDb(jsonObject.getLong(KEY_ID),
+                jsonObject.getString(KEY_TITLE),
+                jsonObject.getString(KEY_OVERVIEW),
+                jsonObject.getString(KEY_POSTER_PATH),
+                jsonObject.getDouble(KEY_VOTE_AVERAGE),
+                jsonObject.getString(KEY_RELEASE_DATE));
+    }
+
+    boolean saveToFavourite(Context context){
         ContentValues contentValues = new ContentValues();
         contentValues.put(MovieContract.MovieEntry.MOVIE_ID, this.id);
         contentValues.put(MovieContract.MovieEntry.MOVIE_TITLE, this.originalTitle);
@@ -172,6 +167,7 @@ public class MovieDb implements Parcelable{
 
         if (context.getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,contentValues)!=null){
             Toast.makeText(context, R.string.added_favourite,Toast.LENGTH_SHORT).show();
+
             return true;
         }else{
             Toast.makeText(context, R.string.add_favourite_error,Toast.LENGTH_SHORT).show();
@@ -180,19 +176,19 @@ public class MovieDb implements Parcelable{
 
     }
 
-    boolean removeFromBookmarks(Context context){
+    boolean removeFromFavourite(Context context){
         long deletedRows = context.getContentResolver().delete(MovieContract.MovieEntry.CONTENT_URI,
                 MovieContract.MovieEntry.MOVIE_ID + "=?",new String[]{Long.toString(this.id)});
         if (deletedRows>0){
-            Toast.makeText(context, R.string.delete_bookmark,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.delete_favourite,Toast.LENGTH_SHORT).show();
             return true;
         }else {
-            Toast.makeText(context, R.string.delete_bookmark_error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.delete_favourite_error, Toast.LENGTH_SHORT).show();
             return false;
         }
     }
 
-    boolean isBookmarked(Context context){
+    boolean isFavourite(Context context){
         Cursor cursor = context.getContentResolver()
                 .query(MovieContract.MovieEntry.CONTENT_URI,
                         new String[]{MovieContract.MovieEntry.MOVIE_ID},
