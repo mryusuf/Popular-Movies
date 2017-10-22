@@ -17,16 +17,18 @@ import java.util.ArrayList;
 public class ReviewsAdapter extends BaseAdapter {
     private ArrayList<Reviews> mReviews;
     private Context context;
-    ReviewsAdapter(Context context){
+
+    ReviewsAdapter(Context context) {
         this.context = context;
         mReviews = new ArrayList<>();
     }
 
-    void setReviews(ArrayList<Reviews> data){
+    void setReviews(ArrayList<Reviews> data) {
         mReviews.clear();
         mReviews.addAll(data);
         notifyDataSetChanged();
     }
+
     @Override
     public int getCount() {
         return mReviews.size();
@@ -34,7 +36,7 @@ public class ReviewsAdapter extends BaseAdapter {
 
     @Override
     public Reviews getItem(int position) {
-        if (position>=0 && position<mReviews.size()){
+        if (position >= 0 && position < mReviews.size()) {
             return mReviews.get(position);
         }
         return null;
@@ -42,7 +44,7 @@ public class ReviewsAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        if (getItem(position) == null){
+        if (getItem(position) == null) {
             return -1L;
         }
         return position;
@@ -52,19 +54,19 @@ public class ReviewsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View reviewItem = convertView;
         Reviews review = getItem(position);
-        if(reviewItem==null){
-            try{
+        if (reviewItem == null) {
+            try {
                 LayoutInflater vi;
                 vi = LayoutInflater.from(context);
-                reviewItem = vi.inflate(R.layout.reviews_list_item,null);
+                reviewItem = vi.inflate(R.layout.reviews_list_item, null);
 
-            }catch (Exception e){
-                Log.e(context.getClass().getSimpleName(),e.toString());
+            } catch (Exception e) {
+                Log.e(context.getClass().getSimpleName(), e.toString());
             }
         }
         assert reviewItem != null;
         ((TextView) reviewItem.findViewById(R.id.review_item_author)).setText(String.format(context.getString(R.string.review_author), review.author));
         ((TextView) reviewItem.findViewById(R.id.review_item_content)).setText(review.content);
-        return  reviewItem;
+        return reviewItem;
     }
 }

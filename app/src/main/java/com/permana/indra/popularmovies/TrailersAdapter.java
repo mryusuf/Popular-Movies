@@ -19,33 +19,35 @@ public class TrailersAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Trailers> mTrailers;
 
-    TrailersAdapter(Context context){
+    TrailersAdapter(Context context) {
         this.context = context;
         this.mTrailers = new ArrayList<>();
     }
 
-    private void clear(){
+    private void clear() {
         mTrailers.clear();
         notifyDataSetChanged();
     }
 
-    void setTrailers(ArrayList<Trailers> trailers){
+    void setTrailers(ArrayList<Trailers> trailers) {
         clear();
         mTrailers.addAll(trailers);
         notifyDataSetChanged();
     }
 
-    public void addTrailers(ArrayList<Trailers> trailers){
+    public void addTrailers(ArrayList<Trailers> trailers) {
         mTrailers.addAll(trailers);
         notifyDataSetChanged();
     }
-    Uri getTrailerUri(int position){
+
+    Uri getTrailerUri(int position) {
         Trailers trailer = getItem(position);
-        if (trailer!=null){
+        if (trailer != null) {
             return Uri.parse(trailer.url);
         }
         return null;
     }
+
     @Override
     public int getCount() {
         return mTrailers.size();
@@ -53,7 +55,7 @@ public class TrailersAdapter extends BaseAdapter {
 
     @Override
     public Trailers getItem(int position) {
-        if (position>=0 && position<mTrailers.size()){
+        if (position >= 0 && position < mTrailers.size()) {
             return mTrailers.get(position);
         }
         return null;
@@ -61,7 +63,7 @@ public class TrailersAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        if (getItem(position) == null){
+        if (getItem(position) == null) {
             return -1L;
         }
         return position;
@@ -71,19 +73,19 @@ public class TrailersAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View trailerItem = convertView;
         Trailers trailer = getItem(position);
-        if(trailerItem==null){
-            try{
+        if (trailerItem == null) {
+            try {
                 LayoutInflater vi;
                 vi = LayoutInflater.from(context);
-                trailerItem = vi.inflate(R.layout.trailers_list_item,parent,false);
+                trailerItem = vi.inflate(R.layout.trailers_list_item, parent, false);
 
-            }catch (Exception e){
-                Log.e(context.getClass().getSimpleName(),e.toString());
+            } catch (Exception e) {
+                Log.e(context.getClass().getSimpleName(), e.toString());
             }
         }
         if (trailerItem != null) {
             ((TextView) trailerItem.findViewById(R.id.tv_trailer_item_title)).setText(trailer.title);
         }
-        return  trailerItem;
+        return trailerItem;
     }
 }

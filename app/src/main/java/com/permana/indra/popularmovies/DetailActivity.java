@@ -34,11 +34,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks  {
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks {
 
     private final String TAG = DetailActivity.class.getSimpleName();
     MovieDb movieDb;
     ImageView ivPoster;
+    TextView tvReview;
     ArrayList<Trailers> mTrailers;
     ArrayList<Reviews> mReviews;
     TrailersAdapter trailersAdapter;
@@ -46,19 +47,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private String key;
 
     private static final int LOADER_ID = 711;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        key=getResources().getString(R.string.key);
+        key = getResources().getString(R.string.key);
         TextView tvOriginalTitle = (TextView) findViewById(R.id.tv_title);
         ivPoster = (ImageView) findViewById(R.id.poster_detail);
+        tvReview = (TextView) findViewById(R.id.tv_review);
         TextView tvOverView = (TextView) findViewById(R.id.tv_overview);
         TextView tvVoteAverage = (TextView) findViewById(R.id.tv_vote_average);
         TextView tvReleaseDate = (TextView) findViewById(R.id.tv_release_date);
-        final Button mFavourite = (Button)findViewById(R.id.favourite_button);
-        mTrailersListView = (ListView)findViewById(R.id.trailers_list_view);
+        final Button mFavourite = (Button) findViewById(R.id.favourite_button);
+        mTrailersListView = (ListView) findViewById(R.id.trailers_list_view);
         trailersAdapter = new TrailersAdapter(this);
         mTrailersListView.setAdapter(trailersAdapter);
         Intent intent = getIntent();
@@ -156,7 +159,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         String reviewsString = Reviews.arrayToString(mReviews);
         Intent reviewsIntent = new Intent(getApplicationContext(), ReviewsActivity.class);
         reviewsIntent.putExtra(getString(R.string.reviews_intent_extra), reviewsString);
-        reviewsIntent.putExtra("title",movieDb.originalTitle);
+        reviewsIntent.putExtra("title", movieDb.originalTitle);
         startActivity(reviewsIntent);
     }
 
@@ -178,8 +181,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
                     if (!local) {
                         NetworkUtilsTask networker = new NetworkUtilsTask();
-                        URL requestTrailersUrl = networker.buildTrailersUrl(id,key);
-                        URL requestReviewsUrl = networker.buildReviewsUrl(id,key);
+                        URL requestTrailersUrl = networker.buildTrailersUrl(id, key);
+                        URL requestReviewsUrl = networker.buildReviewsUrl(id, key);
                         try {
                             String JSONResponseTrailers = networker.getResponseFromHttpUrl(requestTrailersUrl);
                             mTrailers = fetchTrailersFromJson(JSONResponseTrailers);
@@ -218,9 +221,13 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public void onLoadFinished(Loader loader, Object data) {
         movieDb.setTrailers(mTrailers);
         movieDb.setReviews(mReviews);
-
+        if (mReviews.size() > 0) {
+            tvReview.setText(Reviews.singleArrayToStringReview(mReviews));
+        } else {
+            tvReview.setText(getString(R.string.no_reviews));
+        }
         ivPoster.setImageBitmap(movieDb.getPoster());
-        if (mTrailers!=null){
+        if (mTrailers != null) {
             trailersAdapter.setTrailers(mTrailers);
             setListViewHeightBasedOnChildren(mTrailersListView);
         }
@@ -241,18 +248,18 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         int elements = listAdapter.getCount();
 
-        if (elements>0) {
+        if (elements > 0) {
             View listItem = listAdapter.getView(0, null, listView);
-            listItem.measure(0,0);
+            listItem.measure(0, 0);
             // get the height of a single item, multiply by the number of items and get the total height for the item,
             // extra space (more elements) is added
-            int totalHeight = listItem.getMeasuredHeight() * (elements+2);
+            int totalHeight = listItem.getMeasuredHeight() * (elements + 2);
 
             ViewGroup.LayoutParams params = listView.getLayoutParams();
 
             //calculate the total height summing the height of the dividers too
             params.height = totalHeight
-                    + (listView.getDividerHeight() * (listAdapter.getCount()-1));
+                    + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
 
             //set the height
             listView.setLayoutParams(params);
@@ -264,28 +271,28 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         JSONArray trailers = json.getJSONArray("results");
         ArrayList<Trailers> result = new ArrayList<>();
 
-        for (int i = 0; i< trailers.length(); i++){
+        for (int i = 0; i < trailers.length(); i++) {
             JSONObject trailerObject = trailers.getJSONObject(i);
             String site = trailerObject.getString("site");
-            if (site.equals("YouTube")){
-                String url = "https://www.youtube.com/watch?v="+trailerObject.getString("key");
-                result.add(new Trailers(trailerObject.getString("name"),url));
+            if (site.equals("YouTube")) {
+                String url = "https://www.youtube.com/watch?v=" + trailerObject.getString("key");
+                result.add(new Trailers(trailerObject.getString("name"), url));
             }
         }
-        Log.d(TAG,"Trailers Fethed ");
+        Log.d(TAG, "Trailers Fethed ");
         return result;
     }
 
-    private ArrayList<Reviews> fetchReviewsFromJson(String jsonString) throws JSONException{
+    private ArrayList<Reviews> fetchReviewsFromJson(String jsonString) throws JSONException {
         JSONObject json = new JSONObject(jsonString);
         JSONArray trailers = json.getJSONArray("results");
         ArrayList<Reviews> result = new ArrayList<>();
 
-        for (int i = 0; i< trailers.length(); i++){
+        for (int i = 0; i < trailers.length(); i++) {
             JSONObject trailerObject = trailers.getJSONObject(i);
-            result.add(new Reviews(trailerObject.getString("author"),trailerObject.getString("content")));
+            result.add(new Reviews(trailerObject.getString("author"), trailerObject.getString("content")));
         }
-        Log.d(TAG,"Reviews Fetched");
+        Log.d(TAG, "Reviews Fetched");
         return result;
     }
 

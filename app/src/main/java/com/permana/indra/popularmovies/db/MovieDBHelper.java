@@ -26,8 +26,8 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "PopularMovies.db";
     private static final int DB_VERSION = 7;
 
-    public MovieDBHelper(Context context){
-        super(context,DATABASE_NAME,null,DB_VERSION);
+    public MovieDBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DB_VERSION);
     }
 
     @Override

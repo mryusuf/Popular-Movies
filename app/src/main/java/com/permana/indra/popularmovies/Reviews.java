@@ -16,7 +16,8 @@ public class Reviews {
         this.author = author;
         this.content = content;
     }
-    static String arrayToString(ArrayList<Reviews> reviews){
+
+    static String arrayToString(ArrayList<Reviews> reviews) {
         String res = "";
         try {
             for (int i = 0; i < reviews.size(); i++) {
@@ -25,22 +26,34 @@ public class Reviews {
                     res += " -reviewSeparator- ";
                 }
             }
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return "";
         }
         return res;
     }
 
-    static ArrayList<Reviews> stringToArray(String string){
+    static String singleArrayToStringReview(ArrayList<Reviews> reviews) {
+        String res = "";
+        try {
+            for (int i = 0; i < 1; i++) {
+                res += reviews.get(i).author + "\n" + reviews.get(i).content;
+            }
+        } catch (NullPointerException e) {
+            return "";
+        }
+        return res;
+    }
+
+    static ArrayList<Reviews> stringToArray(String string) {
         String[] elements = string.split(" -reviewSeparator- ");
         ArrayList<Reviews> res = new ArrayList<>();
 
         for (String element : elements) {
             String[] item = element.split(",reviewSeparator,");
-            try{
+            try {
                 res.add(new Reviews(item[0], item[1]));
-            }catch (IndexOutOfBoundsException e){
-                Log.d("REVIEWS",e.toString());
+            } catch (IndexOutOfBoundsException e) {
+                Log.d("REVIEWS", e.toString());
             }
         }
         return res;

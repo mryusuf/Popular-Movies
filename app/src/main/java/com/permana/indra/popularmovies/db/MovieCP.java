@@ -17,12 +17,12 @@ public class MovieCP extends ContentProvider {
     private static UriMatcher sUriMatcher = buildUriMatcher();
     private MovieDBHelper mOpenHelper;
 
-    public static UriMatcher buildUriMatcher(){
+    public static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         final String authority = MovieContract.CONTENT_AUTHORITY;
 
-        matcher.addURI(authority, MovieContract.PATH_MOVIE,CODE_MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE, CODE_MOVIE);
 
 
         return matcher;
@@ -38,11 +38,11 @@ public class MovieCP extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor cursor;
-        switch (sUriMatcher.match(uri)){
-            case CODE_MOVIE:{
+        switch (sUriMatcher.match(uri)) {
+            case CODE_MOVIE: {
                 SQLiteDatabase db = mOpenHelper.getReadableDatabase();
                 cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
-                        projection,selection,selectionArgs,
+                        projection, selection, selectionArgs,
                         null,
                         null,
                         sortOrder);
@@ -65,16 +65,16 @@ public class MovieCP extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         Uri returnUri = null;
 
-        switch (sUriMatcher.match(uri)){
-            case CODE_MOVIE:{
+        switch (sUriMatcher.match(uri)) {
+            case CODE_MOVIE: {
                 SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-                long id = db.insert(MovieContract.MovieEntry.TABLE_NAME,null,values);
-                if (id>0){
-                    returnUri =  MovieContract.MovieEntry.buildMovieUri(id);
+                long id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+                if (id > 0) {
+                    returnUri = MovieContract.MovieEntry.buildMovieUri(id);
                 }
                 break;
             }
-            default:{
+            default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
         }
@@ -83,10 +83,10 @@ public class MovieCP extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        switch (sUriMatcher.match(uri)){
-            case CODE_MOVIE:{
+        switch (sUriMatcher.match(uri)) {
+            case CODE_MOVIE: {
                 SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-                return db.delete(MovieContract.MovieEntry.TABLE_NAME,selection,selectionArgs);
+                return db.delete(MovieContract.MovieEntry.TABLE_NAME, selection, selectionArgs);
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

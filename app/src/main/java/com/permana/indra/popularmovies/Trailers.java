@@ -17,7 +17,7 @@ public class Trailers {
         this.url = url;
     }
 
-    static String arrayToString(ArrayList<Trailers> trailers){
+    static String arrayToString(ArrayList<Trailers> trailers) {
         String res = "";
         try {
             for (int i = 0; i < trailers.size(); i++) {
@@ -26,13 +26,13 @@ public class Trailers {
                     res += " -trailerSeparator- ";
                 }
             }
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return "";
         }
         return res;
     }
 
-    static ArrayList<Trailers> stringToArray(String string){
+    static ArrayList<Trailers> stringToArray(String string) {
         String[] elements = string.split(" -trailerSeparator- ");
 
         ArrayList<Trailers> res = new ArrayList<>();

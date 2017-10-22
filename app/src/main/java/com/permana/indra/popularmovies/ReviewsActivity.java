@@ -14,14 +14,15 @@ import java.util.ArrayList;
 public class ReviewsActivity extends AppCompatActivity {
     ListView reviewsListView;
     ReviewsAdapter mAdapter;
-    TextView mTitleTextView,mErrorTextView;
+    TextView mTitleTextView, mErrorTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reviews);
         ActionBar actionBar = getSupportActionBar();
 
-        if (actionBar!=null) {
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         reviewsListView = (ListView) findViewById(R.id.reviews_listView);
@@ -31,7 +32,7 @@ public class ReviewsActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         reviewsListView.setAdapter(mAdapter);
-        String title=intent.getStringExtra("title");
+        String title = intent.getStringExtra("title");
         mTitleTextView.setText(title);
 
         if (intent.hasExtra(getString(R.string.reviews_intent_extra))) {

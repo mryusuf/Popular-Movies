@@ -22,7 +22,7 @@ public class MovieContract {
         public static final String MOVIE_ID = "id";
         public static final String MOVIE_TITLE = "title";
         public static final String MOVIE_OVERVIEW = "overview";
-        public static final String MOVIE_POSTER= "poster";
+        public static final String MOVIE_POSTER = "poster";
         public static final String MOVIE_POSTER_PATH = "poster_path";
         public static final String MOVIE_AVG = "voteAverage";
         public static final String MOVIE_RELEASE_DATE = "releaseDate";
@@ -42,8 +42,8 @@ public class MovieContract {
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
 
-        public static Uri buildMovieUri(long id){
-            return ContentUris.withAppendedId(BASE_CONTENT_URI,id);
+        public static Uri buildMovieUri(long id) {
+            return ContentUris.withAppendedId(BASE_CONTENT_URI, id);
         }
 
     }
