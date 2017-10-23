@@ -40,7 +40,7 @@ public class MovieDb implements Parcelable {
     private final String posterPath;
     public final Double voteAverage;
     private ArrayList<Trailers> trailers;
-    private ArrayList<Reviews> reviews;
+    public ArrayList<Reviews> reviews;
     private Bitmap poster;
 
     public MovieDb(long id, String originalTitle, String overview, String posterPath, double voteAverage, String releaseDate) {

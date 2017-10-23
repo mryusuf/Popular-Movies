@@ -42,6 +42,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     TextView tvReview;
     ArrayList<Trailers> mTrailers;
     ArrayList<Reviews> mReviews;
+    String singleReview;
     TrailersAdapter trailersAdapter;
     ListView mTrailersListView;
     private String key;
@@ -64,7 +65,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mTrailersListView = (ListView) findViewById(R.id.trailers_list_view);
         trailersAdapter = new TrailersAdapter(this);
         mTrailersListView.setAdapter(trailersAdapter);
-        Intent intent = getIntent();
+
         Intent callerIntent = getIntent();
         if (callerIntent.hasExtra(MovieDb.EXTRA_MOVIE)) {
             movieDb = new MovieDb(callerIntent.getBundleExtra(MovieDb.EXTRA_MOVIE));
@@ -156,7 +157,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     public void seeReviews(View v) {
-        String reviewsString = Reviews.arrayToString(mReviews);
+        String reviewsString = Reviews.arrayToString(movieDb.reviews);
         Intent reviewsIntent = new Intent(getApplicationContext(), ReviewsActivity.class);
         reviewsIntent.putExtra(getString(R.string.reviews_intent_extra), reviewsString);
         reviewsIntent.putExtra("title", movieDb.originalTitle);
@@ -221,8 +222,10 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     public void onLoadFinished(Loader loader, Object data) {
         movieDb.setTrailers(mTrailers);
         movieDb.setReviews(mReviews);
+
         if (mReviews.size() > 0) {
-            tvReview.setText(Reviews.singleArrayToStringReview(mReviews));
+            singleReview=Reviews.singleArrayToStringReview(mReviews);
+            tvReview.setText(singleReview);
         } else {
             tvReview.setText(getString(R.string.no_reviews));
         }
