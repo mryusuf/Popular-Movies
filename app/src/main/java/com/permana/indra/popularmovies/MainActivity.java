@@ -175,13 +175,12 @@ public class MainActivity extends AppCompatActivity implements MovieDbAdapter.on
                     movieDbsAdapter.clear();
                     forceLoad();
                 } else {
-                        if (mData != null) {
-                            deliverResult(mData);
-                        }
-                        else {
-                            tvError.setVisibility(View.VISIBLE);
-                            forceLoad();
-                        }
+                    if (mData != null) {
+                        deliverResult(mData);
+                    } else {
+                        tvError.setVisibility(View.VISIBLE);
+                        forceLoad();
+                    }
                 }
             }
 
@@ -234,8 +233,7 @@ public class MainActivity extends AppCompatActivity implements MovieDbAdapter.on
         if (movies != null) {
             movieDbsAdapter.addMovies(movies);
             showPosters();
-        }
-        else {
+        } else {
             showErrorMessage();
         }
     }
@@ -301,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements MovieDbAdapter.on
         mRecyclerView.setVisibility(View.INVISIBLE);
         tvError.setVisibility(View.VISIBLE);
     }
+
     private void showPosters() {
         mRecyclerView.setVisibility(View.VISIBLE);
         tvError.setVisibility(View.INVISIBLE);
